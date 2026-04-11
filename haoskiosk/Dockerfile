@@ -42,6 +42,8 @@ RUN apk update && apk add --no-cache \
      onboard \
      unclutter-xfixes \
      ttf-dejavu \
+### DBus (required by Chromium and GTK)
+     dbus \
 ### Linux utils
      bash \
      util-linux \
