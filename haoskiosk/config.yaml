@@ -3,7 +3,7 @@ name: "HAOS Kiosk Display (Chromium)"
 description: |
   Start X server and Chromium browser on local HAOS server and display dashboards
   in kiosk mode with native 4K HiDPI support (Chromium fork by TCS)
-version: "2.0.0"
+version: "2.0.1"
 slug: "haoskiosk-chromium"
 image: ghcr.io/tailoredcaresolutions/{arch}-addon-haoskiosk-chromium
 

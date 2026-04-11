@@ -67,6 +67,7 @@ bashio::log.info "Core=$(echo "$ha_info" | jq -r '.homeassistant')  HAOS=$(echo 
 #### Clean up on exit:
 TTY0_DELETED=""  #Need to set to empty string since runs with nounset=on (like set -u)
 ONBOARD_CONFIG_FILE="/config/onboard-settings.dconf"
+SAVE_ONSCREEN_CONFIG=false  # Default, overridden by config loading
 cleanup() {
     local exit_code=$?
     bashio::log.info "Cleaning up and exiting..."
@@ -83,17 +84,10 @@ trap cleanup HUP INT QUIT ABRT TERM EXIT
 ################################################################################
 #### Variables
 BROWSER="chromium-browser"
-# Chromium flags for 4K kiosk mode with native HiDPI support
-load_config_var SCALE_FACTOR 2
-BROWSER_FLAGS="--kiosk --no-first-run --noerrdialogs --disable-infobars \
-  --force-device-scale-factor=$SCALE_FACTOR \
-  --disable-dev-shm-usage --no-sandbox \
-  --user-data-dir=/data/chromium \
-  --disable-features=TranslateUI \
-  --disable-background-networking \
-  --disable-sync \
-  --disable-default-apps \
-  --autoplay-policy=no-user-gesture-required"
+# Chromium flags set after config is loaded (see below)
+BROWSER_FLAGS=
+SCALE_FACTOR=2  # Default, overridden by config loading below
+
 
 ################################################################################
 #### Get config variables from HA add-on & set environment variables
@@ -159,6 +153,18 @@ load_config_var REST_IP "127.0.0.1"
 load_config_var REST_BEARER_TOKEN "" 1  # Mask token in log
 load_config_var COMMAND_WHITELIST "^$"  # Default is no commands allowed
 load_config_var DEBUG_MODE false
+load_config_var SCALE_FACTOR 2
+
+# Set Chromium browser flags now that SCALE_FACTOR is loaded
+BROWSER_FLAGS="--kiosk --no-first-run --noerrdialogs --disable-infobars \
+  --force-device-scale-factor=$SCALE_FACTOR \
+  --disable-dev-shm-usage --no-sandbox \
+  --user-data-dir=/data/chromium \
+  --disable-features=TranslateUI \
+  --disable-background-networking \
+  --disable-sync \
+  --disable-default-apps \
+  --autoplay-policy=no-user-gesture-required"
 load_config_var VNC_SERVER ""  1 #Mask password in log
 
 # Validate environment variables set by config.yaml
