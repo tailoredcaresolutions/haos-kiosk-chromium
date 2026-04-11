@@ -5,7 +5,7 @@ description: |
   in kiosk mode with native 4K HiDPI support (Chromium fork by TCS)
 version: "2.0.0"
 slug: "haoskiosk-chromium"
-image: ghcr.io/tailoredcaresolutions/amd64-addon-haoskiosk-chromium
+image: ghcr.io/tailoredcaresolutions/{arch}-addon-haoskiosk-chromium
 
 arch:
   - aarch64
