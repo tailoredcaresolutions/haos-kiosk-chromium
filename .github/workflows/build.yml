@@ -1,0 +1,43 @@
+name: Build Add-on
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  ADDON_SLUG: haoskiosk-chromium
+  ADDON_ARCH: amd64
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }} image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./haoskiosk
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/amd64-addon-haoskiosk-chromium:2.0.0,ghcr.io/${{ github.repository_owner }}/amd64-addon-haoskiosk-chromium:latest
+          build-args: |
+            BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
+            BUILD_VERSION=2.0.0
+          labels: |
+            io.hass.version=2.0.0
+            io.hass.arch=amd64
+            io.hass.type=addon
+            io.hass.name=HAOS Kiosk Display (Chromium)
