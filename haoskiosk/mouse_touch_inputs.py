@@ -467,7 +467,7 @@ if input_args.file is not None:
 ALLOWED_PATHS = {"/bin", "/usr/bin", "/usr/local/bin"} # Executables must be in these directoriesp
 
 ## Commands that are white-listed -- all others are blocked (Note: set to ".*" to allow all or "" to block all)
-DEFAULT_COMMAND_WHITELIST_REGEX = r"cat|date|dbus-send|echo|false|grep|head|ls|luakit|notify-send|ping|ping6|ps|pstree|sleep|tail|test|top|tree|xdotool|xset"
+DEFAULT_COMMAND_WHITELIST_REGEX = r"cat|date|dbus-send|echo|false|grep|head|ls|chromium-browser|notify-send|ping|ping6|ps|pstree|sleep|tail|test|top|tree|xdotool|xset"
 COMMAND_WHITELIST_REGEX = os.getenv("COMMAND_WHITELIST", DEFAULT_COMMAND_WHITELIST_REGEX).strip()
 
 COMPILED_WHITELIST_REGEX: re.Pattern[str] | None = None
@@ -662,7 +662,7 @@ def handle_launch_url(url: str = DEFAULT_LAUNCH_URL, timeout: int | None = None,
     if url != "about:blank" and not url.startswith(("http://", "https://")):
         url = "http://" + url
 
-    cmd = ["luakit", "-n",  url]
+    cmd = ["sh", "-c", "pkill -f chromium; sleep 1; chromium-browser --kiosk --no-first-run --noerrdialogs --force-device-scale-factor=${SCALE_FACTOR:-2} --no-sandbox --user-data-dir=/data/chromium \"" + url + "\" &"]
     _run_subprocess(cmd, timeout=timeout, description=_cmd_name)
 
 @register_function("display_on", optional=["blank_timeout"],

@@ -103,7 +103,7 @@ DEFAULT_LAUNCH_URL = f"{(os.getenv('HA_URL') or 'about:blank').rstrip('/')}/{os.
 ALLOWED_PATHS = {"/bin", "/usr/bin", "/usr/local/bin"} # Executables must be in these directories
 
 ## Commands that are white-listed -- all others are blocked (Note: set to ".*" to allow all or "" to block all)
-DEFAULT_COMMAND_WHITELIST_REGEX = r"cat|date|dbus-send|echo|false|grep|head|ls|luakit|notify-send|ping|ping6|ps|pstree|sleep|tail|test|top|tree|xdotool|xset"
+DEFAULT_COMMAND_WHITELIST_REGEX = r"cat|date|dbus-send|echo|false|grep|head|ls|chromium-browser|notify-send|ping|ping6|ps|pstree|sleep|tail|test|top|tree|xdotool|xset"
 COMMAND_WHITELIST_REGEX = os.getenv("COMMAND_WHITELIST", DEFAULT_COMMAND_WHITELIST_REGEX).strip()
 
 COMPILED_WHITELIST_REGEX: re.Pattern[str] | None = None
@@ -464,7 +464,8 @@ async def handle_launch_url(data: Payload) -> dict[str, Any]:
     url = str(data["url"]) if data.get("url") else DEFAULT_LAUNCH_URL
     if url != "about:blank" and not url.startswith(("http://", "https://")):
         url = "http://" + url
-    asyncio.create_task(execute_command(["luakit", "-n", url], log_prefix="launch_url", allow_command=True))  # Run in the background
+    # Kill existing Chromium and relaunch with new URL (Chromium kiosk has no tab API)
+    asyncio.create_task(execute_command(["sh", "-c", "pkill -f chromium; sleep 1; chromium-browser --kiosk --no-first-run --noerrdialogs --disable-infobars --force-device-scale-factor=${SCALE_FACTOR:-2} --disable-dev-shm-usage --no-sandbox --user-data-dir=/data/chromium --disable-features=TranslateUI --autoplay-policy=no-user-gesture-required \"" + url + "\" &"], log_prefix="launch_url", allow_command=True))
     result = {"success": True, "stdout": "", "stderr": "", "returncode": 0}
     return {"success": result["success"], "result": result}
 

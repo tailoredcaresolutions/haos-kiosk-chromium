@@ -1,7 +1,7 @@
 ################################################################################
 # Add-on: HAOS Kiosk Display - Chromium Edition
 # File: Dockerfile
-# Version: 2.0.0-chromium
+# Version: 2.1.0
 # Based on: puterboy/HAOS-kiosk v1.3.0
 # Modified by: TCS - Chromium fork for native 4K HiDPI support
 # Date: April 2026
@@ -58,8 +58,9 @@ RUN apk update && apk add --no-cache \
      pulseaudio-utils \
 ### VNC (for debugging)
       x11vnc \
-### Chromium Browser (replaces Luakit for full 4K HiDPI support)
+### Chromium Browser + dependencies for native 4K HiDPI support
      chromium \
+     nss \
      font-noto \
      font-noto-emoji \
      ttf-freefont \
@@ -76,7 +77,7 @@ ENV CHROME_PATH=/usr/lib/chromium/
 COPY xorg.conf.default /etc/X11/
 COPY translations/*.yaml /translations/
 
-##### Copy startup and login handler
+##### Copy startup scripts
 COPY run.sh /
 RUN chmod a+x /run.sh
 
