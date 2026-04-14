@@ -373,7 +373,7 @@ echo "xinput list:"
 xinput list | sed 's/^/  /'
 
 #Stop console blinking cursor (this projects through the X-screen)
-echo -e "\033[?25l" > /dev/console
+timeout 2 sh -c 'echo -e "\033[?25l" > /dev/console' || true
 
 #Hide cursor dynamically after CURSOR_TIMEOUT seconds if positive
 if [ "$CURSOR_TIMEOUT" -gt 0 ]; then
@@ -462,13 +462,13 @@ fi
 #### Activate (+/- rotate) desired physical output number
 # Detect connected physical outputs
 
-readarray -t ALL_OUTPUTS < <(xrandr --query | awk '/^[[:space:]]*[A-Za-z0-9-]+/ {print $1}')
+readarray -t ALL_OUTPUTS < <(timeout 5 xrandr --query | awk '/^[[:space:]]*[A-Za-z0-9-]+/ {print $1}')
 bashio::log.info "All video outputs: ${ALL_OUTPUTS[*]}"
 
-readarray -t OUTPUTS < <(xrandr --query | awk '/ connected/ {print $1}')  # Read in array of outputs
+readarray -t OUTPUTS < <(timeout 5 xrandr --query | awk '/ connected/ {print $1}')  # Read in array of outputs
 if [ ${#OUTPUTS[@]} -eq 0 ]; then
-    bashio::log.info "ERROR: No connected outputs detected. Exiting.."
-    exit 1
+    bashio::log.warning "No connected outputs detected or xrandr timed out. Assuming HDMI-A-2."
+    OUTPUTS=("HDMI-A-2")
 fi
 
 # Select the N'th connected output (fallback to last output if N exceeds actual number of outputs)
@@ -487,13 +487,13 @@ OUTPUT_NAME="${OUTPUTS[$((OUTPUT_NUMBER - 1))]}"  #Subtract 1 since zero-based
 for OUTPUT in "${OUTPUTS[@]}"; do
     if [ "$OUTPUT" = "$OUTPUT_NAME" ]; then  #Activate
         if [ "$ROTATE_DISPLAY" = normal ]; then
-            xrandr --output "$OUTPUT_NAME" --primary --auto
+            timeout 5 xrandr --output "$OUTPUT_NAME" --primary --auto || true
         else
-            xrandr --output "$OUTPUT_NAME" --primary --rotate "${ROTATE_DISPLAY}"
+            timeout 5 xrandr --output "$OUTPUT_NAME" --primary --rotate "${ROTATE_DISPLAY}" || true
             bashio::log.info "Rotating $OUTPUT_NAME: ${ROTATE_DISPLAY}"
         fi
     else  # Set as inactive output
-        xrandr --output "$OUTPUT" --off
+        timeout 5 xrandr --output "$OUTPUT" --off || true
     fi
 done
 
@@ -519,7 +519,7 @@ setxkbmap -query  | sed 's/^/  /'  #Log layout
 
 ### Get screen width & height for selected output
 read -r SCREEN_WIDTH SCREEN_HEIGHT < <(
-    xrandr --query --current | grep "^$OUTPUT_NAME " |
+    timeout 5 xrandr --query --current | grep "^$OUTPUT_NAME " |
     sed -n "s/^$OUTPUT_NAME connected.* \([0-9]\+\)x\([0-9]\+\)+.*$/\1 \2/p"
 )
 
