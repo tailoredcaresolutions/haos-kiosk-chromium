@@ -159,6 +159,7 @@ load_config_var SCALE_FACTOR 2
 BROWSER_FLAGS="--kiosk --no-first-run --noerrdialogs --disable-infobars \
   --force-device-scale-factor=$SCALE_FACTOR \
   --disable-dev-shm-usage --no-sandbox \
+  --ignore-gpu-blocklist --enable-zero-copy --enable-features=Vulkan \
   --user-data-dir=/data/chromium \
   --disable-features=TranslateUI \
   --disable-background-networking \

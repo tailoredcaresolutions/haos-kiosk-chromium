@@ -1,0 +1,33 @@
+{
+  "options": {
+  "ha_url": "http://localhost:8123",
+  "ha_dashboard": "local/command-center/compat-tv-test.html?v=1776203427",
+  "login_delay": 5.0,
+  "zoom_level": 100,
+  "scale_factor": 2,
+  "browser_refresh": 20,
+  "screen_timeout": 0,
+  "output_number": 1,
+  "dark_mode": true,
+  "ha_theme": "",
+  "ha_sidebar": "none",
+  "rotate_display": "normal",
+  "map_touch_inputs": true,
+  "keyboard_layout": "us",
+  "cursor_timeout": 5,
+  "onscreen_keyboard": false,
+  "save_onscreen_config": true,
+  "xorg_conf": "Section \"ServerFlags\"\n    Option \"BlankTime\" \"0\"\n    Option \"StandbyTime\" \"0\"\n    Option \"SuspendTime\" \"0\"\n    Option \"OffTime\" \"0\"\nEndSection\n\nSection \"Monitor\"\n    Identifier \"Monitor0\"\n    Option \"DPMS\" \"false\"\n    Option \"Enable\" \"true\"\nEndSection\n\nSection \"Device\"\n    Identifier \"Card0\"\n    Option \"Monitor-HDMI-A-2\" \"Monitor0\"\nEndSection\n\nSection \"Screen\"\n    Identifier \"Screen0\"\n    DefaultDepth 24\n    SubSection \"Display\"\n        Depth 24\n        Modes \"3840x2160\"\n    EndSubSection\nEndSection",
+  "xorg_append_replace": "append",
+  "audio_sink": "auto",
+  "rest_ip": "0.0.0.0",
+  "rest_port": 8080,
+  "rest_bearer_token": "",
+  "gestures": [],
+  "command_whitelist": ".*",
+  "vnc_server": "-",
+  "debug_mode": false,
+  "ha_username": "alexf24",
+  "ha_password": "qefwem-mynriC-qedbi8"
+}
+}
